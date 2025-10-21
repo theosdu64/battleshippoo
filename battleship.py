@@ -15,9 +15,17 @@ class Ship:
         self.positions = positions
         self.name = name
 
+class Game:
+    def __init__(self):
+        self.grid = Grid()
+
+    def print_grid(self):
+        self.grid.print_grid()
+
+
 def main():
-    grid = Grid()
-    grid.print_grid()
+    game = Game()
+    game.print_grid()
 
 if __name__ ==  '__main__':
     main()
