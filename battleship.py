@@ -11,6 +11,7 @@ class Grid:
         print(self.grid)
 
     def place_hit(self, hit_positions, ships):
+        """Affiche les tirs sur la grille"""
         for (row, col) in hit_positions:
             list_position = [pos for ship in ships for pos in ship.positions]
             if (row, col) in list_position:
@@ -41,6 +42,7 @@ class Game:
         self.is_hit(fire_position)
 
     def is_hit(self, input_fire):
+        """memorise un tir si la position n'a pas déjà été tirée"""
         format_input = self.format_position(input_fire)
         if format_input in self.hits:
             print('déjà tiré, recommencez')
@@ -50,6 +52,7 @@ class Game:
             print(self.hits)
 
     def verify(self):
+        """Vérifie si un navires à coulé. Retourne False si partie fini"""
         for ship in self.ships:
             if all(pos in self.hits for pos in ship.positions):
                 print(f'vous avez coulé le bateau {ship.name}')
@@ -64,7 +67,27 @@ class Game:
         response = input("Voulez-vous continuer la partie ? (o/n) : ").lower()
         return response == 'o'
 
+    @staticmethod
+    def verify_input(user_input):
+        """Vérifie si l'input est au format valide ="""
+        if len(user_input) < 2:
+            return False
+
+        col = user_input[0].upper()
+        if col not in 'ABCDEFGHIJ':
+            return False
+
+        row = user_input[1:]
+        if not row.isdigit():
+            return False
+
+        if int(row) < 1 or int(row) > 10:
+            return False
+
+        return True
+
     def format_position(self, str_pos):
+        """Convertit 'A1' en (1, 'A')"""
         col = str_pos[0].upper()
         row = str_pos[1:]
         return (int(row), col)
@@ -85,7 +108,9 @@ def main():
     while continue_game:
         game.grid.place_hit(game.hits, game.ships)
         game.print_grid()
-        where_fire = input('Où voulez vous tirez ?')
+        where_fire = input('Où voulez vous tirez ? ')
+        while not game.verify_input(where_fire):
+            where_fire = input('Où voulez vous tirez ? ')
         game.fire_at_position(where_fire)
         continue_game = game.verify()
         if continue_game:
