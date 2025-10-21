@@ -15,8 +15,10 @@ class Grid:
             list_position = [pos for ship in ships for pos in ship.positions]
             if (row, col) in list_position:
                 self.grid.at[row, col] = 'O'
+                print('TOUCHE')
             else:
                 self.grid.at[row, col] = 'X'
+                print('MANQUE')
 
 class Ship:
     def __init__(self, positions, name):
@@ -40,12 +42,32 @@ class Game:
 
     def is_hit(self, input_fire):
         format_input = self.format_position(input_fire)
-        if format_input in self.hit:
+        if format_input in self.hits:
             print('déjà tiré, recommencez')
             return
         else:
-            self.hit.append(format_input)
-            print(self.hit)
+            self.hits.append(format_input)
+            print(self.hits)
+
+    def verify(self):
+        for ship in self.ships:
+            if all(pos in self.hits for pos in ship.positions):
+                print(f'vous avez coulé le bateau {ship.name}')
+                self.ships.remove(ship)
+        if not self.ships:
+                print('partie terminée')
+                return False
+        return True
+
+    @staticmethod
+    def ask_continue():
+        response = input("Voulez-vous continuer la partie ? (o/n) : ").lower()
+        return response == 'o'
+
+    def format_position(self, str_pos):
+        col = str_pos[0].upper()
+        row = str_pos[1:]
+        return (int(row), col)
 
 def main():
     game = Game()
@@ -61,9 +83,13 @@ def main():
 
     continue_game = True
     while continue_game:
-        game.grid.place
+        game.grid.place_hit(game.hits, game.ships)
         game.print_grid()
         where_fire = input('Où voulez vous tirez ?')
         game.fire_at_position(where_fire)
+        continue_game = game.verify()
+        if continue_game:
+            continue_game = Game.ask_continue()
+
 if __name__ ==  '__main__':
     main()
