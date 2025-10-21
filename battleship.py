@@ -10,6 +10,11 @@ class Grid:
     def print_grid(self):
         print(self.grid)
 
+class Ship:
+    def __init__(self, positions, name):
+        self.positions = positions
+        self.name = name
+
 def main():
     grid = Grid()
     grid.print_grid()
